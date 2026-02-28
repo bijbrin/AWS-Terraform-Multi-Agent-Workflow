@@ -1,0 +1,6 @@
+1:"$Sreact.fragment"
+2:I[83978,["/_next/static/chunks/503e8f996ec296c7.js"],"WorkflowDashboard"]
+3:I[97367,["/_next/static/chunks/2f236954d6a65e12.js"],"OutletBoundary"]
+4:"$Sreact.suspense"
+0:{"buildId":"0edBSJYwVbaeoc9kzEL83","rsc":["$","$1","c",{"children":[["$","main",null,{"className":"min-h-screen bg-background","children":["$","div",null,{"className":"container mx-auto py-8 px-4","children":["$","$L2",null,{}]}]}],[["$","script","script-0",{"src":"/_next/static/chunks/503e8f996ec296c7.js","async":true}]],["$","$L3",null,{"children":["$","$4",null,{"name":"Next.MetadataOutlet","children":"$@5"}]}]]}],"loading":null,"isPartial":false}
+5:null
