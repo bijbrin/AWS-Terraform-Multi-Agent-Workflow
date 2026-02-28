@@ -18,6 +18,7 @@ interface WorkflowStore extends WorkflowState {
   setUserPrompt: (prompt: string) => void;
   setEnvironment: (env: Environment) => void;
   setRegion: (region: string) => void;
+  setAwsCredentials: (creds: { accessKeyId: string; secretAccessKey: string }) => void;
   setAgentStatus: (agent: string, status: WorkflowState['agentStatuses'][string]) => void;
   setInfrastructurePlan: (plan: InfrastructurePlan) => void;
   setGeneratedHCL: (hcl: string) => void;
@@ -35,7 +36,7 @@ interface WorkflowStore extends WorkflowState {
 }
 
 const initialState: Omit<WorkflowStore, 
-  'setUserPrompt' | 'setEnvironment' | 'setRegion' | 'setAgentStatus' | 
+  'setUserPrompt' | 'setEnvironment' | 'setRegion' | 'setAwsCredentials' | 'setAgentStatus' | 
   'setInfrastructurePlan' | 'setGeneratedHCL' | 'setValidationReport' | 
   'setCostEstimate' | 'setApprovalDecision' | 'setDeploymentResult' | 
   'addLog' | 'setCurrentStep' | 'setStatus' | 'reset' | 'startWorkflow' | 
@@ -46,6 +47,10 @@ const initialState: Omit<WorkflowStore,
   userPrompt: '',
   environment: 'dev',
   region: 'ap-southeast-2',
+  awsCredentials: {
+    accessKeyId: '',
+    secretAccessKey: '',
+  },
   agentStatuses: {
     planner: 'idle',
     generator: 'idle',
@@ -63,6 +68,8 @@ export const useWorkflowStore = create<WorkflowStore>((set, get) => ({
   setUserPrompt: (prompt) => set({ userPrompt: prompt }),
   setEnvironment: (env) => set({ environment: env }),
   setRegion: (region) => set({ region }),
+  
+  setAwsCredentials: (creds) => set({ awsCredentials: creds }),
   
   setAgentStatus: (agent, status) => set((state) => ({
     agentStatuses: { ...state.agentStatuses, [agent]: status }

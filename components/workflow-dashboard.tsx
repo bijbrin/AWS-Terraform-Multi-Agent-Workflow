@@ -8,6 +8,7 @@ import { InfrastructurePlanView, ValidationReportView } from '@/components/infra
 import { CostEstimateView } from '@/components/cost-estimate-view';
 import { ApprovalGate } from '@/components/approval-gate';
 import { DeploymentResult } from '@/components/deployment-result';
+import { TerraformCodeView } from '@/components/terraform-code-view';
 import { useWorkflowStore } from '@/store/workflow-store';
 import { 
   Bot, 
@@ -17,7 +18,8 @@ import {
   UserCheck, 
   Rocket,
   LayoutGrid,
-  Terminal
+  Terminal,
+  FileCode
 } from 'lucide-react';
 
 export function WorkflowDashboard() {
@@ -66,10 +68,14 @@ export function WorkflowDashboard() {
         {/* Right Column - Dynamic Content */}
         <div className="col-span-12 lg:col-span-8">
           <Tabs defaultValue="overview" className="space-y-4">
-            <TabsList className="grid w-full grid-cols-4">
+            <TabsList className="grid w-full grid-cols-5">
               <TabsTrigger value="overview" className="flex items-center gap-2">
                 <LayoutGrid className="h-4 w-4" />
                 Overview
+              </TabsTrigger>
+              <TabsTrigger value="terraform" className="flex items-center gap-2">
+                <FileCode className="h-4 w-4" />
+                Terraform
               </TabsTrigger>
               <TabsTrigger value="details" className="flex items-center gap-2">
                 <FileText className="h-4 w-4" />
@@ -107,6 +113,10 @@ export function WorkflowDashboard() {
                   </div>
                 )}
               </div>
+            </TabsContent>
+
+            <TabsContent value="terraform">
+              <TerraformCodeView />
             </TabsContent>
 
             <TabsContent value="details" className="space-y-4">

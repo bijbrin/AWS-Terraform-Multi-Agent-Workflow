@@ -9,6 +9,12 @@ export interface WorkflowState {
   environment: Environment;
   region: string;
   
+  // AWS Credentials
+  awsCredentials: {
+    accessKeyId: string;
+    secretAccessKey: string;
+  };
+  
   // Agent outputs
   infrastructurePlan?: InfrastructurePlan;
   generatedHCL?: string;

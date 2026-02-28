@@ -13,7 +13,9 @@ import {
   XCircle, 
   AlertTriangle,
   Shield,
-  DollarSign
+  DollarSign,
+  Cloud,
+  FileCode
 } from 'lucide-react';
 
 export function ApprovalGate() {
@@ -22,6 +24,9 @@ export function ApprovalGate() {
     costEstimate, 
     validationReport, 
     infrastructurePlan,
+    awsCredentials,
+    region,
+    environment,
     approveDeployment,
     rejectDeployment
   } = useWorkflowStore();
@@ -124,6 +129,19 @@ export function ApprovalGate() {
             Review the details below carefully.
           </AlertDescription>
         </Alert>
+
+        {/* AWS Account Info */}
+        <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+          <div className="flex items-center gap-2 mb-2">
+            <Cloud className="h-4 w-4 text-blue-500" />
+            <span className="text-sm font-medium text-blue-700">Target AWS Account</span>
+          </div>
+          <div className="text-xs text-muted-foreground space-y-1">
+            <p><strong>Account ID:</strong> {awsCredentials.accessKeyId ? `${awsCredentials.accessKeyId.slice(0, 8)}...` : 'Not configured'}</p>
+            <p><strong>Region:</strong> {region}</p>
+            <p><strong>Environment:</strong> {environment}</p>
+          </div>
+        </div>
 
         {/* Summary */}
         <div className="grid grid-cols-2 gap-3">
