@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Multi-Agent System Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 50%, #0d0d2b 100%);
+            min-height: 100vh;
+            color: #e0e0ff;
+        }
+        .header {
+            padding: 20px 40px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header h1 {
+            font-size: 24px;
+            background: linear-gradient(90deg, #00f2ff, #ff00a0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .main {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 20px;
+            padding: 20px 40px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        .network-panel {
+            background: rgba(0,0,0,0.3);
+            border-radius: 16px;
+            padding: 20px;
+            min-height: 500px;
+        }
+        .network {
+            position: relative;
+            width: 100%;
+            height: 450px;
+        }
+        .node {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 600;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .node.supervisor {
+            width: 130px;
+            height: 130px;
+            background: linear-gradient(135deg, #ff007a, #7000ff);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+        }
+        .node.agent {
+            background: linear-gradient(135deg, #00c6ff, #0072ff);
+        }
+        .node.agent:nth-child(2) { top: 5%; left: 50%; transform: translateX(-50%); }
+        .node.agent:nth-child(3) { top: 20%; right: 15%; }
+        .node.agent:nth-child(4) { top: 50%; right: 5%; transform: translateY(-50%); }
+        .node.agent:nth-child(5) { bottom: 20%; right: 15%; }
+        .node.agent:nth-child(6) { bottom: 5%; left: 50%; transform: translateX(-50%); }
+        .node.agent:nth-child(7) { bottom: 20%; left: 15%; }
+        .node.agent:nth-child(8) { top: 50%; left: 5%; transform: translateY(-50%); }
+        .node.processing { animation: pulse 1s infinite; border: 2px solid #fff; }
+        @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0.4); } 100% { box-shadow: 0 0 0 20px rgba(255,255,255,0); } }
+        .node-icon { font-size: 28px; margin-bottom: 4px; }
+        .sidebar { display: flex; flex-direction: column; gap: 20px; }
+        .metrics-card {
+            background: rgba(0,0,0,0.3);
+            border-radius: 16px;
+            padding: 20px;
+        }
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .metric-value { font-size: 20px; font-weight: bold; color: #00f2ff; }
+        .btn {
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .btn-primary {
+            background: linear-gradient(45deg, #ff007a, #7000ff);
+            color: white;
+        }
+        .logs-panel {
+            background: rgba(0,0,0,0.3);
+            border-radius: 16px;
+            padding: 20px;
+            flex: 1;
+        }
+        .log-entry {
+            padding: 10px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 12px;
+            border-left: 3px solid;
+        }
+        .log-entry.info { background: rgba(0,242,255,0.08); border-color: #00f2ff; }
+        .log-entry.success { background: rgba(0,255,100,0.08); border-color: #00ff64; }
+        .log-entry.processing { background: rgba(255,193,7,0.08); border-color: #ffc107; }
+    </style>
+</head>
+<body>
+    <div class='header'>
+        <h1>🤖 Multi-Agent System Dashboard</h1>
+        <div style='display:flex;align-items:center;gap:10px;'>
+            <div style='width:8px;height:8px;background:#00ff64;border-radius:50%;animation:pulse 2s infinite;'></div>
+            <span>Online</span>
+        </div>
+    </div>
+    <div class='main'>
+        <div class='network-panel'>
+            <div style='font-size:14px;text-transform:uppercase;letter-spacing:1px;color:#8888aa;margin-bottom:20px;'>Agent Network</div>
+            <div class='network' id='network'>
+                <div class='node supervisor' id='supervisor'><div class='node-icon'>🎯</div><div>Supervisor</div></div>
+                <div class='node agent' id='agent-chat'><div class='node-icon'>💬</div><div>Chat</div></div>
+                <div class='node agent' id='agent-web'><div class='node-icon'>🔍</div><div>Web Search</div></div>
+                <div class='node agent' id='agent-research'><div class='node-icon'>📚</div><div>Research</div></div>
+                <div class='node agent' id='agent-mermaid'><div class='node-icon'>📊</div><div>Mermaid</div></div>
+                <div class='node agent' id='agent-pdf'><div class='node-icon'>📄</div><div>PDF</div></div>
+                <div class='node agent' id='agent-markdown'><div class='node-icon'>📝</div><div>Markdown</div></div>
+            </div>
+        </div>
+        <div class='sidebar'>
+            <div class='metrics-card'>
+                <div style='font-size:14px;text-transform:uppercase;letter-spacing:1px;color:#8888aa;margin-bottom:20px;'>Metrics</div>
+                <div class='metric'><span style='font-size:13px;color:#8888aa;'>Active Agents</span><span class='metric-value' id='activeCount'>0</span></div>
+                <div class='metric'><span style='font-size:13px;color:#8888aa;'>Completed</span><span class='metric-value' id='completedCount'>0</span></div>
+                <div class='metric'><span style='font-size:13px;color:#8888aa;'>Total Queries</span><span class='metric-value' id='totalQueries'>0</span></div>
+                <button class='btn btn-primary' onclick='simulate()' style='width:100%;margin-top:15px;'>▶ Simulate Query</button>
+            </div>
+            <div class='logs-panel'>
+                <div style='font-size:14px;text-transform:uppercase;letter-spacing:1px;color:#8888aa;margin-bottom:20px;'>System Logs</div>
+                <div id='logs'>
+                    <div class='log-entry info'>Dashboard initialized</div>
+                    <div class='log-entry info'>6 agents ready</div>
+                    <div class='log-entry info'>Supervisor online</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const agents = ['chat', 'web', 'research', 'mermaid', 'pdf', 'markdown'];
+        let metrics = { active: 0, completed: 0, total: 0 };
+        
+        function log(msg, type = 'info') {
+            const logs = document.getElementById('logs');
+            const entry = document.createElement('div');
+            entry.className = 'log-entry ' + type;
+            entry.textContent = '[' + new Date().toLocaleTimeString() + '] ' + msg;
+            logs.insertBefore(entry, logs.firstChild);
+        }
+        
+        function setAgentStatus(id, status) {
+            const el = document.getElementById('agent-' + id);
+            if (el) el.classList.toggle('processing', status === 'processing');
+        }
+        
+        function updateMetrics() {
+            document.getElementById('activeCount').textContent = metrics.active;
+            document.getElementById('completedCount').textContent = metrics.completed;
+            document.getElementById('totalQueries').textContent = metrics.total;
+        }
+        
+        async function simulate() {
+            metrics.total++;
+            log('New query received', 'processing');
+            
+            // Activate random agents
+            const count = 2 + Math.floor(Math.random() * 3);
+            const selected = agents.slice(0, count);
+            
+            metrics.active = selected.length;
+            updateMetrics();
+            
+            selected.forEach(a => {
+                setAgentStatus(a, 'processing');
+                log(a + ' agent processing...', 'processing');
+            });
+            
+            await new Promise(r => setTimeout(r, 2000));
+            
+            selected.forEach(a => {
+                setAgentStatus(a, '');
+                log(a + ' agent completed', 'success');
+            });
+            
+            metrics.active = 0;
+            metrics.completed += selected.length;
+            updateMetrics();
+            log('Query completed', 'success');
+        }
+    </script>
+</body>
+</html>

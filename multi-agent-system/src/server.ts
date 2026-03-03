@@ -1,5 +1,6 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
+import path from 'path';
 import { Supervisor } from './supervisor';
 import { StateManager } from './state';
 import { QueryRequest, StreamEvent } from './types';
@@ -11,12 +12,20 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
+// Serve static files from public directory
+app.use(express.static(path.join(__dirname, '../public')));
+
 // Initialize supervisor
 const supervisor = new Supervisor();
 
 // Health check
 app.get('/health', (req: Request, res: Response) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+// Root redirect to dashboard
+app.get('/', (req: Request, res: Response) => {
+  res.redirect('/dashboard');
 });
 
 // Query endpoint - synchronous response
@@ -98,10 +107,14 @@ app.get('/api/agents', (req: Request, res: Response) => {
     { type: 'mermaid', name: 'Mermaid Agent', description: 'Generate diagrams from descriptions' },
     { type: 'pdf', name: 'PDF Agent', description: 'Generate PDF documents' },
     { type: 'markdown', name: 'Markdown Agent', description: 'Generate formatted markdown' },
-    { type: 'ui_ux', name: 'UI/UX Agent', description: 'Generate React app designs with code' },
   ];
 
   res.json({ agents });
+});
+
+// Dashboard route
+app.get('/dashboard', (req: Request, res: Response) => {
+  res.sendFile(path.join(__dirname, '../public/dashboard.html'));
 });
 
 // Start server
@@ -111,5 +124,6 @@ app.listen(PORT, () => {
   console.log(`   - POST /api/query    - Submit a query`);
   console.log(`   - GET  /api/stream   - Stream results via SSE`);
   console.log(`   - GET  /api/agents   - List available agents`);
+  console.log(`   - GET  /dashboard    - View system dashboard`);
   console.log(`   - GET  /health       - Health check`);
 });
